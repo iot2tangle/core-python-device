@@ -1,6 +1,7 @@
 import json
 import requests
 
+# IOT2TANGLE SENDER
 class Sender:
     def __init__(self, j):
         if type(j) is type({}):
@@ -17,3 +18,26 @@ class Sender:
 
     def send_MQTT(self):
         print(self.data_json)
+
+# IOT2TANGLE BUNDLES
+class Bundle:
+    global elements
+    elements = {}   # Dictionary {"ble-mac": "i2t-json"}
+
+    # Init in 0 (error) 'elements' dict
+    def __init__(self, macs):
+        for mac in macs:
+            elements[mac] = r'{"iot2tangle":[{"sensor":"Error","data":[{"Error":"0"}]}],"device":"' + mac + r'","timestamp":0}'
+
+    # Update the json 
+    def update(self, mac, e_json):
+        elements[mac] = e_json
+
+    # Concatenation of all the json elements, return an Json I2T bundle string
+    def get_json(self):
+        json = r'{"bundle":['
+        for mac in elements:
+            json += elements[mac] + ","
+        json = json[:-1]
+        json += r']}'
+        return json
